@@ -3,33 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f7efe6" />
+    <meta name="theme-color" content="#f7f2f2" />
     <title>SoloMate</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260604" />
   </head>
   <body>
+    <div class="ambient-bg" aria-hidden="true">
+      <span class="float-bag"></span>
+      <span class="float-camera"></span>
+      <span class="float-map"></span>
+      <span class="float-pin"></span>
+      <span class="float-ticket"></span>
+      <span class="float-star"></span>
+      <span class="float-suitcase"></span>
+      <span class="float-sunglasses"></span>
+      <span class="float-mini-camera"></span>
+    </div>
     <main class="app-shell">
-      <section class="hero">
-        <img src="./assets/solo-trip-hero.png" alt="独自旅行插画" />
-        <div class="hero-copy">
-          <span>SoloMate</span>
-          <h1>一个人旅行，也可以很安心</h1>
-          <p>为你的 solo trip 生成准备清单、实用建议、拍照话术和应急卡片。</p>
-        </div>
-      </section>
+      <div class="brand-mark" aria-label="SoloMate">
+        <span>S</span><span>o</span><span>l</span><span>o</span>
+      </div>
 
       <section class="trip-panel">
         <div class="section-head">
           <div>
-            <p>当前旅行</p>
-            <h2 id="tripTitle">先创建一次旅行</h2>
+            <p>这趟去哪</p>
+            <h2 id="tripTitle">先填目的地</h2>
           </div>
-          <button id="resetBtn" class="icon-btn" title="重置">↻</button>
+          <div class="head-actions">
+            <button id="comfortModeToggle" class="lock-btn" type="button">安心模式</button>
+            <button id="resetBtn" class="icon-btn" title="重置">↻</button>
+          </div>
         </div>
 
         <form id="tripForm" class="trip-form">
           <label for="destination">
-            目的地
+            去哪里
             <input id="destination" type="text" placeholder="例如：京都 / 大理 / 巴黎" />
           </label>
           <div class="form-row">
@@ -52,7 +61,7 @@
             </label>
           </div>
           <fieldset>
-            <legend>我最担心</legend>
+            <legend>最担心</legend>
             <div class="chips">
               <label><input type="checkbox" value="安全" />安全</label>
               <label><input type="checkbox" value="行李" />行李</label>
@@ -60,58 +69,272 @@
               <label><input type="checkbox" value="孤独" />孤独</label>
             </div>
           </fieldset>
-          <button class="primary-btn" type="submit">生成我的旅行准备</button>
+          <button class="primary-btn" type="submit">生成我的旅行计划</button>
         </form>
       </section>
 
       <nav class="tabs" aria-label="应用导航">
+        <span class="tab-indicator" aria-hidden="true"></span>
         <button class="tab active" data-tab="today">今日</button>
+        <button class="tab" data-tab="plan">计划</button>
         <button class="tab" data-tab="packing">清单</button>
-        <button class="tab" data-tab="guide">指南</button>
         <button class="tab" data-tab="photo">拍照</button>
-        <button class="tab" data-tab="safe">应急</button>
+        <button class="tab" data-tab="safe">指南</button>
+        <button class="tab" data-tab="mine">我的</button>
       </nav>
 
       <section id="today" class="tab-page active">
         <div class="today-card">
-          <p>今日建议</p>
-          <h2 id="todayHeadline">先把目的地和担心点写下来</h2>
-          <p id="todayText">Solo trip 的安全感，很多时候来自提前准备好的几个选项。</p>
+          <p>今天先做</p>
+          <h2 id="todayHeadline">先定下一站</h2>
+          <p id="todayText">一个人出门不用一次准备完，先把最重要的几件事搞定。</p>
+        </div>
+        <div class="home-stats">
+          <button class="stat-card" data-jump="plan">
+            <span id="homePlanStat">0/7</span>
+            <strong>出发计划</strong>
+          </button>
+          <button class="stat-card" data-jump="packing">
+            <span id="homePackStat">0/0</span>
+            <strong>行李清单</strong>
+          </button>
+          <button class="stat-card" data-jump="safe">
+            <span id="homeContactStat">0</span>
+            <strong>紧急联系人</strong>
+          </button>
+        </div>
+        <div class="journey-path">
+          <button class="path-card" data-jump="packing">
+            <div class="mini-scene pack-scene" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span>打包</span>
+            <strong>少带点</strong>
+          </button>
+          <button class="path-card" data-jump="photo">
+            <div class="mini-scene photo-scene" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span>拍照</span>
+            <strong>拍好看</strong>
+          </button>
+          <button class="path-card" data-jump="safe">
+            <div class="mini-scene safe-scene" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span>安心</span>
+            <strong>别慌张</strong>
+          </button>
+        </div>
+        <div class="quiz-panel">
+          <div class="section-head compactless">
+            <div>
+              <p>小测试</p>
+              <h2>看看你适合怎么玩</h2>
+            </div>
+          </div>
+          <div class="quiz-grid">
+            <label for="quizExperience">
+              出门经验
+              <select id="quizExperience">
+                <option value="first">第一次一个人玩</option>
+                <option value="some">自己玩过几次</option>
+                <option value="many">我很熟了</option>
+              </select>
+            </label>
+            <label for="quizGoal">
+              这次想
+              <select id="quizGoal">
+                <option value="calm">好好放空</option>
+                <option value="photo">拍点好看的</option>
+                <option value="explore">随便逛逛</option>
+                <option value="brave">练练胆量</option>
+              </select>
+            </label>
+          </div>
+          <button id="quizBtn" class="secondary-btn" type="button">生成玩法</button>
+          <div id="personaCard" class="persona-card"></div>
         </div>
         <div class="task-grid" id="taskGrid"></div>
       </section>
 
+      <section id="plan" class="tab-page">
+        <div class="section-head">
+          <div>
+            <p>出发前</p>
+            <h2>每天一点点</h2>
+          </div>
+          <span id="planCount">0/0</span>
+        </div>
+        <div id="planList" class="timeline"></div>
+      </section>
+
       <section id="packing" class="tab-page">
+        <div class="page-visual icon-visual packing-visual">
+          <div class="visual-scene packing-icon-scene" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </div>
+          <div class="visual-copy">
+            <p>清单</p>
+            <h2>按目的地打包</h2>
+            <span>基础必带会保留，其他按国家、月份、天气和玩法补上。</span>
+          </div>
+        </div>
+        <div class="packing-context">
+          <label for="packCountry">
+            国家 / 城市
+            <select id="packCountry"></select>
+          </label>
+          <div class="form-row">
+            <label for="packMonth">
+              月份
+              <select id="packMonth"></select>
+            </label>
+            <label for="packWeather">
+              天气
+              <select id="packWeather">
+                <option value="auto">按季节估算</option>
+                <option value="hot">很热</option>
+                <option value="cold">偏冷</option>
+                <option value="rainy">多雨</option>
+                <option value="dry">干燥</option>
+              </select>
+            </label>
+          </div>
+          <label for="packReason">
+            这次主要为了
+              <select id="packReason">
+              <option value="city">城市散步</option>
+              <option value="photo">拍照记录</option>
+              <option value="shopping">购物逛街</option>
+              <option value="nature">户外自然</option>
+              <option value="work">远程办公</option>
+            </select>
+          </label>
+        </div>
         <div class="section-head">
           <div>
             <p>行李清单</p>
-            <h2>出发前逐项确认</h2>
+            <h2 id="packingHeadline">逐项确认</h2>
           </div>
           <span id="packingCount">0/0</span>
         </div>
         <div id="packingList" class="check-list"></div>
       </section>
 
-      <section id="guide" class="tab-page">
-        <div class="filter-row" id="guideFilters"></div>
-        <div id="guideCards" class="card-list"></div>
-      </section>
-
       <section id="photo" class="tab-page">
-        <div class="photo-tool">
-          <h2>请路人帮拍话术</h2>
-          <p id="photoScript">你好，可以麻烦你帮我拍一张全身照吗？我想把背景也拍进去，手机竖着拿就可以，谢谢。</p>
-          <button id="copyPhoto" class="secondary-btn">复制话术</button>
+        <div class="page-visual icon-visual photo-visual">
+          <div class="visual-scene photo-icon-scene" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </div>
+          <div class="visual-copy">
+            <p>Photo</p>
+            <h2>一个人也好拍</h2>
+            <span>抽姿势，再去外部平台找参考。</span>
+          </div>
         </div>
-        <div id="photoCards" class="card-list"></div>
+        <div class="pose-draw">
+          <div>
+            <p>姿势抽卡</p>
+            <h2>来个姿势</h2>
+          </div>
+          <div id="poseCard" class="pose-card"></div>
+          <button id="drawPose" class="primary-btn" type="button">抽一个姿势</button>
+        </div>
+        <div class="section-head compact">
+          <div>
+            <p>灵感参考</p>
+            <h2>找点灵感</h2>
+          </div>
+        </div>
+        <div id="inspirationCards" class="resource-grid"></div>
+
+        <div class="section-head compact">
+          <div>
+            <p>拍摄工具</p>
+            <h2>找小工具</h2>
+          </div>
+        </div>
+        <div id="shoppingCards" class="resource-grid"></div>
       </section>
 
       <section id="safe" class="tab-page">
+        <div class="guide-hero">
+          <p>指南</p>
+          <h2>少分类，多干货</h2>
+          <span>先看旅行建议，需要时再用下面的应急工具。</span>
+        </div>
+        <div id="safeGuideCards" class="card-list"></div>
+
+        <div class="page-visual icon-visual safe-visual">
+          <div class="visual-scene safe-icon-scene" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </div>
+          <div class="visual-copy">
+            <p>应急</p>
+            <h2>先看下一步</h2>
+            <span>选场景，再联系你信任的人。</span>
+          </div>
+        </div>
+        <div class="emergency-actions">
+          <button data-emergency="unsafe">我感觉不安全</button>
+          <button data-emergency="lost">我迷路了</button>
+          <button data-emergency="battery">手机快没电</button>
+          <button data-emergency="home">我想回住处</button>
+        </div>
+        <div id="emergencyResult" class="emergency-result"></div>
+        <div class="emergency-panel">
+          <div class="section-head">
+            <div>
+              <p>紧急联系人</p>
+              <h2>一键拨打</h2>
+            </div>
+          </div>
+          <form id="contactForm" class="contact-form">
+            <input id="contactName" type="text" placeholder="联系人姓名" />
+            <input id="contactPhone" type="tel" placeholder="电话号码，例如 +852 9123 4567" />
+            <button class="primary-btn" type="submit">保存联系人</button>
+          </form>
+          <div id="contactList" class="contact-list"></div>
+        </div>
         <div id="safeCards" class="card-list urgent"></div>
+      </section>
+
+      <section id="mine" class="tab-page">
+        <div class="section-head">
+          <div>
+            <p>我的</p>
+            <h2>心情记录</h2>
+          </div>
+        </div>
+
+        <div class="journal-box mood-box">
+          <h2>今天心情</h2>
+          <textarea id="journalInput" rows="4" placeholder="会保存到当前选中的日历日期。写下今天的小事、喜欢的瞬间，或者一句想对自己说的话。"></textarea>
+          <button id="saveJournal" class="secondary-btn">保存心情</button>
+        </div>
+
+        <div class="calendar-panel">
+          <div class="section-head compactless">
+            <div>
+              <p>旅行日历</p>
+              <h2 id="calendarTitle">本月记录</h2>
+            </div>
+          </div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+          <div id="calendarDetail" class="calendar-detail"></div>
+        </div>
       </section>
     </main>
 
     <div id="toast" class="toast">已复制</div>
-    <script src="./app.js"></script>
+    <div id="planSummaryModal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-summary></div>
+      <article class="summary-card" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+        <button class="summary-close" data-close-summary aria-label="关闭计划总结">×</button>
+        <p>旅行计划已生成</p>
+        <h2 id="summaryTitle">你的 Solo Trip 准备总结</h2>
+        <div id="summaryContent" class="summary-content"></div>
+        <div class="summary-actions">
+          <button class="secondary-btn" data-summary-jump="plan">查看 7 天计划</button>
+          <button class="primary-btn" data-summary-jump="packing">查看行李清单</button>
+        </div>
+      </article>
+    </div>
+    <script src="./app.js?v=20260604"></script>
   </body>
 </html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7efe6" />
+    <title>SoloMate</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <img src="./assets/solo-trip-hero.png" alt="独自旅行插画" />
+        <div class="hero-copy">
+          <span>SoloMate</span>
+          <h1>一个人旅行，也可以很安心</h1>
+          <p>为你的 solo trip 生成准备清单、实用建议、拍照话术和应急卡片。</p>
+        </div>
+      </section>
+
+      <section class="trip-panel">
+        <div class="section-head">
+          <div>
+            <p>当前旅行</p>
+            <h2 id="tripTitle">先创建一次旅行</h2>
+          </div>
+          <button id="resetBtn" class="icon-btn" title="重置">↻</button>
+        </div>
+
+        <form id="tripForm" class="trip-form">
+          <label for="destination">
+            目的地
+            <input id="destination" type="text" placeholder="例如：京都 / 大理 / 巴黎" />
+          </label>
+          <div class="form-row">
+            <label for="days">
+              天数
+              <select id="days">
+                <option value="2">1-2 天</option>
+                <option value="5">3-5 天</option>
+                <option value="9">7 天以上</option>
+              </select>
+            </label>
+            <label for="tripType">
+              类型
+              <select id="tripType">
+                <option value="city">城市</option>
+                <option value="sea">海边</option>
+                <option value="outdoor">户外</option>
+                <option value="abroad">国外</option>
+              </select>
+            </label>
+          </div>
+          <fieldset>
+            <legend>我最担心</legend>
+            <div class="chips">
+              <label><input type="checkbox" value="安全" />安全</label>
+              <label><input type="checkbox" value="行李" />行李</label>
+              <label><input type="checkbox" value="拍照" />拍照</label>
+              <label><input type="checkbox" value="孤独" />孤独</label>
+            </div>
+          </fieldset>
+          <button class="primary-btn" type="submit">生成我的旅行准备</button>
+        </form>
+      </section>
+
+      <nav class="tabs" aria-label="应用导航">
+        <button class="tab active" data-tab="today">今日</button>
+        <button class="tab" data-tab="packing">清单</button>
+        <button class="tab" data-tab="guide">指南</button>
+        <button class="tab" data-tab="photo">拍照</button>
+        <button class="tab" data-tab="safe">应急</button>
+      </nav>
+
+      <section id="today" class="tab-page active">
+        <div class="today-card">
+          <p>今日建议</p>
+          <h2 id="todayHeadline">先把目的地和担心点写下来</h2>
+          <p id="todayText">Solo trip 的安全感，很多时候来自提前准备好的几个选项。</p>
+        </div>
+        <div class="task-grid" id="taskGrid"></div>
+      </section>
+
+      <section id="packing" class="tab-page">
+        <div class="section-head">
+          <div>
+            <p>行李清单</p>
+            <h2>出发前逐项确认</h2>
+          </div>
+          <span id="packingCount">0/0</span>
+        </div>
+        <div id="packingList" class="check-list"></div>
+      </section>
+
+      <section id="guide" class="tab-page">
+        <div class="filter-row" id="guideFilters"></div>
+        <div id="guideCards" class="card-list"></div>
+      </section>
+
+      <section id="photo" class="tab-page">
+        <div class="photo-tool">
+          <h2>请路人帮拍话术</h2>
+          <p id="photoScript">你好，可以麻烦你帮我拍一张全身照吗？我想把背景也拍进去，手机竖着拿就可以，谢谢。</p>
+          <button id="copyPhoto" class="secondary-btn">复制话术</button>
+        </div>
+        <div id="photoCards" class="card-list"></div>
+      </section>
+
+      <section id="safe" class="tab-page">
+        <div id="safeCards" class="card-list urgent"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast">已复制</div>
+    <script src="./app.js"></script>
+  </body>
+</html>

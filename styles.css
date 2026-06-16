@@ -579,12 +579,35 @@ select {
   gap: 10px;
 }
 
-.destination-picker input {
+.destination-field {
+  grid-column: 1 / -1;
+}
+
+.destination-display {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0 42px 0 14px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 850;
+  cursor: pointer;
   padding-right: 42px;
   background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
   background-position: calc(100% - 22px) 19px, calc(100% - 16px) 19px;
   background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
+}
+
+.destination-display span {
+  color: var(--ink);
+}
+
+.destination-display.is-placeholder span {
+  color: var(--muted);
 }
 
 .destination-dropdown {
@@ -653,6 +676,203 @@ select {
   color: var(--muted);
   font-size: 12px;
   font-weight: 750;
+}
+
+.destination-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgba(34, 38, 48, 0.16);
+  padding: 22px;
+  backdrop-filter: blur(12px);
+}
+
+.destination-panel[hidden] {
+  display: none;
+}
+
+.destination-panel-card {
+  display: grid;
+  width: min(760px, 100%);
+  max-height: min(78vh, 720px);
+  border: 1px solid rgba(238, 236, 236, 0.98);
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 24px 60px rgba(44, 49, 64, 0.16);
+  overflow: hidden;
+}
+
+.destination-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px 10px;
+}
+
+.destination-panel-head p,
+.destination-section-title {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.destination-panel-head h2 {
+  margin: 3px 0 0;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.destination-close {
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.destination-search {
+  width: calc(100% - 40px);
+  margin: 0 20px 12px;
+  background: rgba(247, 242, 242, 0.72);
+}
+
+.destination-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 20px 14px;
+}
+
+.destination-tabs button,
+.popular-destinations button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.destination-tabs button.active,
+.popular-destinations button:hover,
+.destination-tabs button:hover {
+  border-color: rgba(145, 199, 242, 0.75);
+  background: rgba(220, 237, 255, 0.64);
+}
+
+.destination-panel-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26px;
+  min-height: 0;
+  border-top: 1px solid rgba(238, 236, 236, 0.8);
+}
+
+.destination-scroll {
+  max-height: 510px;
+  overflow-y: auto;
+  padding: 16px 16px 22px 20px;
+}
+
+.destination-section + .destination-section {
+  margin-top: 18px;
+}
+
+.popular-destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.destination-city-list {
+  display: grid;
+  margin-top: 8px;
+}
+
+.destination-letter {
+  margin: 14px 0 6px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.destination-city-row,
+.destination-custom-row {
+  display: grid;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgba(238, 236, 236, 0.88);
+  background: transparent;
+  color: var(--ink);
+  padding: 12px 4px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.destination-city-row:hover,
+.destination-custom-row:hover {
+  background: rgba(220, 237, 255, 0.32);
+}
+
+.destination-city-row strong,
+.destination-custom-row strong {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.destination-city-row span,
+.destination-custom-row span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.destination-alphabet {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 8px 8px 8px 0;
+}
+
+.destination-alphabet button {
+  width: 20px;
+  min-height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.destination-alphabet button:hover {
+  background: rgba(220, 237, 255, 0.72);
+  color: var(--ink);
+}
+
+.form-note {
+  margin: -2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.6;
 }
 
 .plan-ai-panel,
@@ -1590,6 +1810,15 @@ fieldset {
   display: grid;
   gap: 10px;
   margin-top: 12px;
+}
+
+.generation-basis {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.6;
+  margin: 0 0 2px;
 }
 
 .packing-context {
@@ -2601,7 +2830,7 @@ body.comfort-mode .emergency-result {
   }
 
   .destination-split {
-    grid-template-columns: 0.86fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .trip-form fieldset,
@@ -2635,5 +2864,51 @@ body.comfort-mode .emergency-result {
 
   #safe .card-list {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .destination-panel {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .destination-panel-card {
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 30px 30px 24px 24px;
+  }
+
+  .destination-panel-head {
+    padding: 16px 16px 8px;
+  }
+
+  .destination-search {
+    width: calc(100% - 32px);
+    margin: 0 16px 10px;
+  }
+
+  .destination-tabs {
+    padding: 0 16px 12px;
+  }
+
+  .destination-scroll {
+    max-height: 58vh;
+    padding: 14px 12px 20px 16px;
+  }
+
+  .destination-city-row,
+  .destination-custom-row {
+    min-height: 54px;
+    padding-right: 6px;
+  }
+
+  .destination-alphabet {
+    padding-right: 5px;
+  }
+
+  .destination-alphabet button {
+    width: 22px;
+    min-height: 19px;
   }
 }

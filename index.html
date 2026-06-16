@@ -30,7 +30,7 @@
       <section class="trip-panel">
         <div class="section-head">
           <div>
-            <p>出发前先定心</p>
+            <p>出发前的小安排</p>
             <h2 id="tripTitle">别慌，先填这趟去哪</h2>
           </div>
           <div class="head-actions">
@@ -41,15 +41,43 @@
 
         <form id="tripForm" class="trip-form">
           <div class="destination-split" id="destinationPicker">
-            <div class="destination-picker" id="countryPicker">
-              <label for="countryInput">国家 / 地区</label>
-              <input id="countryInput" type="text" placeholder="先选国家，例如：中国 / 日本" autocomplete="off" aria-expanded="false" />
-              <div id="countryDropdown" class="destination-dropdown" hidden></div>
+            <div class="destination-picker destination-field">
+              <label for="destinationDisplay">你要去哪里</label>
+              <button id="destinationDisplay" class="destination-display" type="button" aria-haspopup="dialog" aria-expanded="false">
+                <span id="destinationDisplayText">比如：东京 / 布里斯班 / 大理</span>
+              </button>
+              <input id="countryInput" type="hidden" autocomplete="off" />
+              <input id="cityInput" type="hidden" autocomplete="off" />
             </div>
-            <div class="destination-picker" id="cityPicker">
-              <label for="cityInput">城市</label>
-              <input id="cityInput" type="text" placeholder="再选城市，例如：曼谷 / 东京" autocomplete="off" aria-expanded="false" />
-              <div id="cityDropdown" class="destination-dropdown" hidden></div>
+            <div id="destinationPanel" class="destination-panel" hidden>
+              <div class="destination-panel-card" role="dialog" aria-modal="true" aria-label="选择目的地">
+                <div class="destination-panel-head">
+                  <div>
+                    <p>目的地</p>
+                    <h2>你要去哪里</h2>
+                  </div>
+                  <button id="closeDestinationPanel" class="destination-close" type="button" aria-label="关闭">×</button>
+                </div>
+                <input id="destinationSearch" class="destination-search" type="search" placeholder="搜索国家、城市或目的地" autocomplete="off" />
+                <div class="destination-tabs" role="tablist" aria-label="目的地分类">
+                  <button type="button" class="active" data-destination-tab="mainland_china">中国大陆</button>
+                  <button type="button" data-destination-tab="hk_macau_taiwan">港澳台</button>
+                  <button type="button" data-destination-tab="international">国际</button>
+                </div>
+                <div class="destination-panel-body">
+                  <div class="destination-scroll">
+                    <section class="destination-section">
+                      <div class="destination-section-title">热门目的地</div>
+                      <div id="popularDestinations" class="popular-destinations"></div>
+                    </section>
+                    <section class="destination-section">
+                      <div class="destination-section-title">城市列表</div>
+                      <div id="destinationCityList" class="destination-city-list"></div>
+                    </section>
+                  </div>
+                  <div id="destinationAlphabet" class="destination-alphabet" aria-label="字母索引"></div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="form-row">
@@ -99,6 +127,7 @@
               <label><input type="checkbox" value="loneliness" />孤独</label>
             </div>
           </fieldset>
+          <p class="form-note">填完后，会给你今天先做什么、清单和轻量安排。</p>
           <button class="primary-btn" type="submit">帮我捋一下</button>
         </form>
       </section>
@@ -148,21 +177,21 @@
           <span id="planCount">先生成</span>
         </div>
         <div class="plan-ai-panel">
-          <p>专属计划</p>
-          <h2>根据这趟旅行，先给你一个稳一点的安排</h2>
-          <span>会参考你的城市、天数、月份、天气和最担心的事来生成。</span>
-          <button id="generatePlanBtn" class="primary-btn" type="button">根据这个城市帮我安排</button>
+          <p>专属安排</p>
+          <h2>按这趟旅行的状态来排</h2>
+          <span>会看你的城市、天气、天数和担心点，再给一个不乱的版本。</span>
+          <button id="generatePlanBtn" class="primary-btn" type="button">生成我的旅行安排</button>
         </div>
         <div class="tuning-panel">
           <div class="section-head compactless">
             <div>
-              <p>自定义</p>
+              <p>调一下</p>
               <h2>自定义你的旅行</h2>
-              <span>选一下你的旅行状态，计划会更贴近你。</span>
+              <span>调一下节奏，生成更适合你的安排。</span>
             </div>
           </div>
           <div id="travelTuning" class="tuning-grid"></div>
-          <button id="regeneratePlanBtn" class="secondary-btn inline-action" type="button">重新生成我的计划</button>
+          <button id="regeneratePlanBtn" class="secondary-btn inline-action" type="button">按我的状态重新安排</button>
         </div>
         <button id="cityInsightCheck" class="secondary-btn inline-action soft-action" type="button">根据这座城市补充提醒</button>
         <div id="cityInsightTips" class="resource-grid compact-output"></div>
@@ -187,7 +216,7 @@
           </div>
           <span id="packingCount">先生成</span>
         </div>
-        <button id="extraPackCheck" class="secondary-btn inline-action" type="button">帮我再检查一下</button>
+        <button id="extraPackCheck" class="secondary-btn inline-action" type="button">按这趟旅行再检查一遍</button>
         <div id="extraPackTips" class="resource-grid compact-output"></div>
         <div id="packingList" class="check-list"></div>
       </section>
@@ -206,7 +235,7 @@
         <div class="pose-draw">
           <div>
             <p>姿势抽卡</p>
-            <h2>选一个不尴尬的动作</h2>
+            <h2>不知道怎么拍，就先抽一个姿势。</h2>
           </div>
           <div id="poseCard" class="pose-card"></div>
           <button id="drawPose" class="primary-btn" type="button">抽一个姿势</button>
@@ -221,8 +250,8 @@
         </div>
         <div class="section-head compact">
           <div>
-            <p>小物</p>
-            <h2>需要的话，去这里搜</h2>
+            <p>拍照小工具</p>
+            <h2>需要的时候再搜，不用提前买一堆。</h2>
           </div>
         </div>
         <div class="external-links shopping-links" aria-label="旅行拍照小物快捷搜索">

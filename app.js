@@ -1,24 +1,33 @@
+function loadStored(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw == null ? fallback : JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
 const state = {
-  trip: JSON.parse(localStorage.getItem("solomate-trip") || "null"),
-  checked: JSON.parse(localStorage.getItem("solomate-checked") || "{}"),
-  favorites: JSON.parse(localStorage.getItem("solomate-favorites") || "[]"),
-  journals: JSON.parse(localStorage.getItem("solomate-journals") || "[]"),
-  contacts: JSON.parse(localStorage.getItem("solomate-contacts") || "[]"),
-  persona: JSON.parse(localStorage.getItem("solomate-persona") || "null"),
-  packingContext: JSON.parse(localStorage.getItem("solomate-packing-context") || "null"),
-  destinationState: JSON.parse(localStorage.getItem("solomate-destination-state") || "null"),
-  planGenerated: JSON.parse(localStorage.getItem("solomate-plan-generated") || "false"),
-  travelTuning: JSON.parse(localStorage.getItem("solomate-travel-tuning") || "null") || {
+  trip: loadStored("solomate-trip", null),
+  checked: loadStored("solomate-checked", {}),
+  favorites: loadStored("solomate-favorites", []),
+  journals: loadStored("solomate-journals", []),
+  contacts: loadStored("solomate-contacts", []),
+  persona: loadStored("solomate-persona", null),
+  packingContext: loadStored("solomate-packing-context", null),
+  destinationState: loadStored("solomate-destination-state", null),
+  planGenerated: loadStored("solomate-plan-generated", false),
+  travelTuning: loadStored("solomate-travel-tuning", null) || {
     rhythm: "balanced",
     walk: "normal",
     safety: "steady",
     photo: "casual",
     alone: "enjoy",
   },
-  calendar: JSON.parse(localStorage.getItem("solomate-calendar") || "{}"),
+  calendar: loadStored("solomate-calendar", {}),
   selectedCalendarDay: new Date().getDate(),
   selectedMood: "🙂",
-  comfortMode: JSON.parse(localStorage.getItem("solomate-comfort-mode") || "false"),
+  comfortMode: loadStored("solomate-comfort-mode", false),
   currentEmergencyText: "",
   lastPoseText: "",
   recentPhotoThemes: [],
@@ -178,10 +187,37 @@ const cityEnglishNames = {
 };
 
 const cityAliases = {
-  东京: "tokyo dongjing", 香港: "hong kong xianggang", 台北: "taipei taibei", 大阪: "osaka daban", 京都: "kyoto jingdu", 首尔: "seoul shouer", 郑州: "zhengzhou", 大理: "dali", 北京: "beijing", 上海: "shanghai", 曼谷: "bangkok mangu", 新加坡: "singapore xinjiapo",
+  北京: "beijing", 上海: "shanghai", 广州: "guangzhou", 深圳: "shenzhen", 成都: "chengdu", 杭州: "hangzhou", 南京: "nanjing", 西安: "xian xi'an", 长沙: "changsha", 重庆: "chongqing", 郑州: "zhengzhou", 厦门: "xiamen", 大理: "dali", 丽江: "lijiang", 三亚: "sanya", 青岛: "qingdao", 苏州: "suzhou", 武汉: "wuhan", 昆明: "kunming", 桂林: "guilin", 洛阳: "luoyang", 开封: "kaifeng", 哈尔滨: "haerbin harbin", 大连: "dalian", 沈阳: "shenyang", 天津: "tianjin", 福州: "fuzhou", 宁波: "ningbo", 合肥: "hefei", 济南: "jinan", 拉萨: "lasa lhasa", 西宁: "xining", 乌鲁木齐: "wulumuqi urumqi",
+  香港: "hong kong xianggang", 澳门: "macau macao aomen", 台北: "taipei taibei", 台中: "taichung taizhong", 高雄: "kaohsiung gaoxiong", 花莲: "hualien", 垦丁: "kenting", 九份: "jiufen", 淡水: "tamsui danshui", 嘉义: "chiayi jiayi", 宜兰: "yilan",
+  东京: "tokyo dongjing", 大阪: "osaka daban", 京都: "kyoto jingdu", 首尔: "seoul shouer", 釜山: "busan fushan", 曼谷: "bangkok mangu", 清迈: "chiang mai qingmai", 新加坡: "singapore xinjiapo", 吉隆坡: "kuala lumpur jilongpo", 巴厘岛: "bali balidao",
+  伦敦: "london lundun", 巴黎: "paris bali", 罗马: "rome luoma", 米兰: "milan milan", 巴塞罗那: "barcelona basailuona", 纽约: "new york niuyue", 洛杉矶: "los angeles luoshanji", 旧金山: "san francisco jiujinshan", 西雅图: "seattle xiyatu", 温哥华: "vancouver wengehua", 多伦多: "toronto duolunduo", 悉尼: "sydney xini", 墨尔本: "melbourne moerben", 布里斯班: "brisbane bulisiban", 奥克兰: "auckland aokelan", 迪拜: "dubai dibai", 伊斯坦布尔: "istanbul yisitanbuer",
 };
 
-const popularDestinationNames = ["东京", "大阪", "京都", "台北", "香港", "曼谷", "新加坡", "首尔", "上海", "北京", "郑州", "大理", "厦门", "泉州", "桂林", "巴黎", "伦敦", "纽约", "悉尼", "迪拜"];
+const destinationTabs = [
+  { key: "mainland_china", label: "中国大陆" },
+  { key: "hk_macau_taiwan", label: "港澳台" },
+  { key: "international", label: "国际" },
+];
+
+const popularDestinationNames = {
+  mainland_china: ["北京", "上海", "广州", "深圳", "成都", "杭州", "南京", "西安", "长沙", "重庆", "郑州", "厦门", "大理", "丽江", "三亚", "青岛", "苏州", "武汉"],
+  hk_macau_taiwan: ["香港", "澳门", "台北", "台中", "高雄", "花莲", "垦丁", "九份", "淡水"],
+  international: ["东京", "大阪", "京都", "首尔", "釜山", "曼谷", "清迈", "新加坡", "吉隆坡", "巴厘岛", "伦敦", "巴黎", "罗马", "纽约", "洛杉矶", "旧金山", "温哥华", "悉尼", "墨尔本", "布里斯班"],
+};
+
+function regionTypeFromRegion(region = "") {
+  if (region === "中国大陆") return "mainland_china";
+  if (region === "港澳台") return "hk_macau_taiwan";
+  return "international";
+}
+
+function regionDisplayForDestination(item = {}) {
+  if (item.regionType === "mainland_china") return "中国大陆";
+  if (item.city === "香港") return "中国香港";
+  if (item.city === "澳门") return "中国澳门";
+  if (item.regionType === "hk_macau_taiwan") return "中国台湾";
+  return item.country || "";
+}
 
 function normalizeDestinationData() {
   const countries = new Map();
@@ -204,15 +240,19 @@ function normalizeDestinationData() {
     group.cities.forEach((city) => {
       if (country.cities.some((item) => item.city === city)) return;
       const cityEn = cityEnglishNames[city] || city;
+      const regionType = regionTypeFromRegion(group.region);
+      const aliases = [cityEn, cityAliases[city] || "", city].filter(Boolean);
       country.cities.push({
         city,
         cityEn,
         country: group.country,
         countryEn,
         region: group.region,
+        regionType,
         sortKey: cityEn,
+        aliases,
         customInput: false,
-        keywords: `${city} ${cityEn} ${cityAliases[city] || ""} ${group.country} ${countryEn} ${group.region}`.toLowerCase(),
+        keywords: `${city} ${aliases.join(" ")} ${group.country} ${countryEn} ${group.region}`.toLowerCase(),
       });
     });
   });
@@ -222,8 +262,11 @@ function normalizeDestinationData() {
 }
 
 const countryItems = normalizeDestinationData();
-const destinationItems = countryItems.flatMap((country) => country.cities.map((city) => ({ ...city, country: country.country, countryEn: country.countryEn })));
+const destinationItems = countryItems
+  .flatMap((country) => country.cities.map((city) => ({ ...city, country: country.country, countryEn: country.countryEn })))
+  .sort((a, b) => a.sortKey.localeCompare(b.sortKey, "en"));
 const destinationOptions = uniqueItems(destinationItems.map((item) => item.city));
+let activeDestinationTab = state.destinationState?.regionType || "mainland_china";
 
 const neutralProfile = {
   key: "neutral",
@@ -301,8 +344,34 @@ const cityRuleGroups = [
     tips: ["香港步行量和上下坡会比想象中明显，鞋和补水先确认。", "湿热或下雨时，室内商场连接和港铁路线会更稳。", "晚上回住处先看港铁主线，不要临时钻小路。"],
   },
   {
+    id: "brisbane",
+    names: ["布里斯班"],
+    label: "布里斯班",
+    plan: {
+      focus: "先确认住处到河边、市中心和公共交通的距离，户外别排得太晒。",
+      activities: "河边慢走、市中心轻量散步、室内休息点穿插。",
+      avoid: "白天暴晒时连续户外步行，或者把跨区域路线排得太散。",
+      night: "晚间回住处路线先看公共交通和主路，别临时绕远。",
+    },
+    packing: ["河边或户外路线先看遮阴", "公共交通和回住处路线截图", "午后室内休息点收藏", "舒适鞋和轻薄外套放顺手"],
+    tips: ["布里斯班适合把河边和市中心分开慢慢走，别一天跨太多区域。", "户外日晒会影响体力，中午最好有室内缓冲。", "晚间回住处路线提前看清，公共交通和步行距离都要留意。"],
+  },
+  {
+    id: "bangkok",
+    names: ["曼谷"],
+    label: "曼谷",
+    plan: {
+      focus: "先确认住处附近的轻轨、地铁或官方打车方式，白天别硬扛高温。",
+      activities: "交通方便区域、商场避暑、短距离街区探索。",
+      avoid: "中午长时间户外暴走，或者把堵车时段的跨区路线排太满。",
+      night: "晚间回住处优先官方打车或清楚的交通主线。",
+    },
+    packing: ["轻轨 / 地铁和官方打车 App 先登录", "商场或室内休息点收藏", "回住处路线截图", "堵车时段别把转场卡太紧"],
+    tips: ["曼谷白天热、路上也容易堵，路线顺比多去几个点更重要。", "商场和轻轨沿线可以当作中途缓冲。", "晚上回住处别临时找不熟的路，官方打车或交通主线更稳。"],
+  },
+  {
     id: "hotTransit",
-    names: ["曼谷", "新加坡", "香港", "台北"],
+    names: ["新加坡", "台北"],
     label: "热带/高密度城市",
     plan: {
       focus: "高温、下雨和步行量都要留余地，中午安排室内休息。",
@@ -458,7 +527,7 @@ const guides = [
   {
     id: "guide-home",
     tag: "现在怎么办",
-    title: "我想回住处",
+    title: "我想赶紧回住处",
     intro: "先做什么：确认住宿地址、入口位置和最稳的交通方式。",
     points: ["不要做什么：不要临时走偏僻小路，也不要硬撑着继续逛。", "可以马上采取的行动：选择主路、公共交通主线或官方打车，上车后把路线截图发给联系人。", "安心提醒：想回去就回去，旅行不是考试。"],
   },
@@ -472,12 +541,12 @@ const guides = [
 ];
 
 const photoThemePool = {
-  街景: ["巷子尽头那一块光", "转角刚好出现的小店门口", "你刚刚路过但忍不住回头的一幕", "一条看起来很像电影场景的小路", "傍晚灯亮起来的那几秒", "风把衣角吹起来的时候", "路边有生活感的杂乱小角落", "阳光打在墙上的时候", "远远看到的招牌和行人", "一个你愿意慢下来站一会儿的地方", "雨停后路面反光的那一刻", "街灯刚亮、天还没完全暗的时候", "树影落在人行道上的形状", "你刚走过、但突然觉得好看的那条路", "城市天空线里最安静的一角"],
-  交通: ["站台灯光和远处驶来的车", "车窗里晃过去的城市", "拉着行李走向出口的背影", "出站口那一瞬间的光", "机场登机口前的等待感", "高铁座位边随手放下的小包", "地图导航和窗外街景同框", "走向车站的那段路", "站名牌旁边的自己", "等车时低头整理包的瞬间", "电梯上升时看到的城市", "车窗边落在手上的光"],
-  吃饭: ["刚端上来还没动的一餐", "窗边座位和面前那杯东西", "一个人吃饭但气氛很好的一刻", "店里最好看的那个角落", "桌面上最像旅行的一组东西", "咖啡杯旁边的城市倒影", "菜单、窗光和手边小物", "外带袋子放在街边长椅上", "热气刚冒出来的那几秒", "一个人坐下后终于松口气的桌面"],
-  室内: ["窗边的光落进房间", "刚回到房间时随手放下的包", "床边最有安全感的一角", "行李箱打开以后最真实的样子", "房间里最像“今天在这里生活过”的地方", "镜子前刚准备出门的时候", "晚上回房间后的灯光", "酒店窗外的夜景一角", "椅子上搭着外套和包的画面", "退房前房间恢复安静的样子", "床头灯照到小物件的时候", "走廊尽头安静的灯"],
-  状态: ["假装只是刚好路过", "坐着发呆的时候", "整理头发的瞬间", "低头看手机但背景很好看", "刚坐下来的那个动作", "回头看一眼", "一只手扶着栏杆", "站在路边等灯的时候", "背影和街景一起", "走进画面的那一瞬间", "靠在墙边休息一下", "从镜子里看到今天的自己"],
-  情绪: ["今天这个城市最温柔的一面", "让你突然安静下来的那一刻", "一个“还好我来了”的画面", "今天最想留住的颜色", "一个不需要露脸也很像自己的瞬间", "看起来很自由的一幕", "今天最像在旅行的一刻", "你一个人也觉得舒服的地方", "有风、有光、有人路过的瞬间", "今天最有故事感的画面", "让你觉得不用赶路的一幕", "只有今天才会遇到的普通瞬间"],
+  街景: ["走到转角时刚好看到的小店", "傍晚路灯亮起来的那一刻", "巷子尽头那块光", "路边最有生活感的小角落", "今天让你想停下来的地方", "一条你刚刚走过的小路", "你刚刚路过但忍不住回头的一幕", "一条看起来很像电影场景的小路", "阳光打在墙上的时候", "远远看到的招牌和行人", "雨停后路面反光的那一刻", "城市天空线里最安静的一角"],
+  交通: ["刚坐下时放在身边的包", "车窗边那一点光", "出站前回头看到的人群", "行李箱停在脚边的瞬间", "车站里刚好亮起来的屏幕", "等车时靠在墙边的自己", "车窗外一闪而过的城市", "站台灯光和远处驶来的车", "走向车站的那段路", "电梯上升时看到的城市", "地图导航和窗外街景同框", "出站口那一瞬间的光"],
+  吃饭: ["刚端上来还没动的那一刻", "窗边座位和面前那杯东西", "一个人吃饭但气氛很好的一刻", "店里最好看的那个角落", "咖啡杯旁边的城市倒影", "菜单、窗光和手边的小日常", "外带袋子放在街边长椅上", "热气刚冒出来的那几秒", "一个人坐下后终于松口气的桌面", "店门口让你犹豫了一下的光"],
+  室内: ["回到房间后随手放下的包", "床边那盏让人安心的灯", "窗帘拉开后的第一眼", "出门前镜子里的自己", "行李箱打开后最真实的一角", "晚上回房间后的桌面", "窗边的光落进房间", "房间里最像“今天在这里生活过”的地方", "酒店窗外的夜景一角", "椅子上搭着外套和包的画面", "退房前房间恢复安静的样子", "走廊尽头安静的灯"],
+  状态: ["假装只是刚好路过", "回头看一眼", "坐下来发呆的瞬间", "整理头发的时候", "低头看手机，但背景很好看", "背影和街景一起", "一只手扶着栏杆", "站在路边等灯的时候", "走进画面的那一瞬间", "靠在墙边休息一下", "从镜子里看到今天的自己", "刚坐下来的那个动作"],
+  情绪: ["今天这个城市最温柔的一面", "让你突然安静下来的那一刻", "一个“还好我来了”的画面", "今天最想留住的颜色", "一个不需要露脸也很像自己的瞬间", "今天最像在旅行的一刻", "你一个人也觉得舒服的地方", "有风、有光、有人路过的瞬间", "今天最有故事感的画面", "让你觉得不用赶路的一幕", "只有今天才会遇到的普通瞬间", "看起来很自由的一幕"],
   友好机位: ["光线好的窗边座位", "楼梯转角那面干净的墙", "能坐下来慢慢拍的长椅", "镜子里刚好能看到街景的位置", "栏杆边但不危险的位置", "咖啡店门口的自然光", "街边招牌下面的阴影", "书店一角的安静光线", "博物馆外墙前的留白", "公园小路上有树影的地方", "桥边能看到远处城市的位置", "酒店大堂角落的柔和灯光"],
 };
 
@@ -549,16 +618,16 @@ const personaMap = {
 };
 
 const poseDeck = [
-  ["街道", "背对镜头看街景", "手机放低一点，人站画面三分之一处", "背影街拍"],
-  ["窗边", "坐在窗边看向外面", "用自然光，不用看镜头", "窗边记录"],
-  ["咖啡店", "手拿咖啡或票根拍局部", "桌面留一点前景，画面会更松", "局部细节"],
-  ["路边", "假装整理头发", "身体侧一点，连拍 5 张选自然的", "自然动作"],
-  ["车站", "走路时拍背影", "把行李箱放进画面，像刚好路过", "出发感"],
-  ["街角", "低头看地图或手机", "不要站在路中间，靠墙或店门口更安全", "低头动作"],
-  ["公园", "坐在长椅上看远处", "人物别太满，留一点空气感", "安静画面"],
-  ["路面", "拍脚步和路面细节", "不用露脸，也能记录你走过哪里", "脚步细节"],
-  ["镜子", "用镜子拍半身", "背景先收干净，手机挡一半脸也可以", "镜面自拍"],
-  ["桌边", "只拍手部、饮料、桌面和窗外", "适合不想出镜但想留下氛围的时候", "不露脸"],
+  ["街道", "街边背影", "不用露脸，站在街边看向前面就好。", "背影"],
+  ["窗边", "坐在窗边看出去", "不用看镜头，就像真的在发呆。", "安静"],
+  ["咖啡店", "手边的小日常", "拿着杯子或地图，拍一点手和窗外就够了。", "局部"],
+  ["路边", "整理头发的瞬间", "假装刚好被拍到，连拍几张选最自然的。", "自然"],
+  ["车站", "走路时的背影", "假装只是刚好经过，让镜头在后面跟一下。", "出发感"],
+  ["街角", "低头看手机", "站在安全的位置，像在确认下一站。", "低头"],
+  ["公园", "坐着看远处", "不用摆动作，坐下来让自己放松一点。", "安静"],
+  ["路面", "走过这里的感觉", "拍一点脚边和路面，也能记住今天走过哪。", "不露脸"],
+  ["镜子", "镜子里的半身", "手机挡一点脸也没关系，像出门前顺手记录。", "镜面"],
+  ["桌边", "窗边桌面", "不想露脸时，拍手边、窗光和面前的小东西。", "不露脸"],
 ];
 
 const emergencyScenarios = {
@@ -697,7 +766,9 @@ function createCustomDestination(countryInput = "", cityInput = "") {
       country: cityMatch.country,
       countryEn: cityMatch.countryEn,
       region: cityMatch.region,
+      regionType: cityMatch.regionType || regionTypeFromRegion(cityMatch.region),
       sortKey: cityMatch.sortKey,
+      aliases: cityMatch.aliases || [],
       customInput: false,
     };
   }
@@ -707,7 +778,9 @@ function createCustomDestination(countryInput = "", cityInput = "") {
     country: countryMatch?.country || countryValue || "自定义",
     countryEn: countryMatch?.countryEn || countryValue || "Custom",
     region: countryMatch?.region || "自定义目的地",
+    regionType: "custom",
     sortKey: city,
+    aliases: [city],
     customInput: true,
   };
 }
@@ -721,14 +794,30 @@ function getDestinationState() {
     state.destinationState = next;
     if (state.trip) state.trip.destinationState = next;
   }
-  return next || { city: "", cityEn: "", country: "", countryEn: "", region: "", customInput: true };
+  return next || { city: "", cityEn: "", country: "", countryEn: "", region: "", regionType: "custom", customInput: true };
+}
+
+function updateDestinationDisplay() {
+  const button = $("#destinationDisplay");
+  const text = $("#destinationDisplayText");
+  if (!button || !text) return;
+  const destination = state.destinationState?.city ? state.destinationState : null;
+  if (!destination) {
+    text.textContent = "比如：东京 / 布里斯班 / 大理";
+    button.classList.add("is-placeholder");
+    return;
+  }
+  text.textContent = `${destination.city} · ${regionDisplayForDestination(destination) || destination.country || "目的地"}`;
+  button.classList.remove("is-placeholder");
 }
 
 function setDestinationState(destination, options = {}) {
   if (!destination?.city) return;
   state.destinationState = destination;
+  activeDestinationTab = destination.regionType && destination.regionType !== "custom" ? destination.regionType : activeDestinationTab;
   if ($("#countryInput")) $("#countryInput").value = destination.country || "";
   if ($("#cityInput")) $("#cityInput").value = destination.city || "";
+  updateDestinationDisplay();
   if (state.trip) {
     state.trip.destination = destination.city;
     state.trip.destinationState = destination;
@@ -744,6 +833,37 @@ function setDestinationState(destination, options = {}) {
   if (state.trip) renderPlanSummary(state.trip);
   if ($("#cityInsightTips")?.classList.contains("show")) renderCityInsightTips();
   if ($("#extraPackTips")?.classList.contains("show")) renderExtraPackingTips();
+}
+
+function persistCurrentTripSettings(options = {}) {
+  const destination = createCustomDestination($("#countryInput")?.value || "", $("#cityInput")?.value || "") || state.destinationState;
+  const daysSelect = $("#days");
+  const typeSelect = $("#tripType");
+  const worries = $$("#tripForm input[type='checkbox']:checked").map((box) => normalizeConcern(box.value));
+  const days = daysSelect?.value || state.trip?.days || "2";
+  const daysLabel = daysSelect?.selectedOptions?.[0]?.textContent || state.trip?.daysLabel || "1-2 天";
+  const type = typeSelect?.value || state.trip?.type || "city";
+  if (destination?.city) {
+    state.destinationState = destination;
+  }
+  state.trip = {
+    ...(state.trip || {}),
+    destination: destination?.city || state.trip?.destination || "",
+    destinationState: destination || state.trip?.destinationState || null,
+    days,
+    daysLabel,
+    type,
+    worries,
+  };
+  state.packingContext = {
+    ...(state.packingContext || {}),
+    country: destination?.city || state.trip.destination || "",
+    month: Number($("#tripMonth")?.value || state.packingContext?.month || getCurrentMonth()),
+    weather: $("#tripWeather")?.value || state.packingContext?.weather || "auto",
+    reason: type,
+  };
+  if (!options.keepPlan) state.planGenerated = false;
+  save();
 }
 
 function detectCityRule(input = getDestinationValue()) {
@@ -1466,6 +1586,28 @@ function generateCityInsight() {
       packing: ["八达通 / 支付方式", "过关或交通截图", "室内休息点收藏", "回住处港铁主线截图"],
       guide: ["香港步行量、上下坡和湿热感会比较明显，晚上回住处先看港铁主线。"],
     },
+    brisbane: {
+      today: ["先确认住处到河边、市中心和最近车站的距离。", "户外日晒会消耗体力，中午最好留一个室内缓冲点。", "晚间回住处路线提前看清，别临时绕远。"],
+      days: [
+        ["住处周边", "先熟悉住处附近、吃饭点和公共交通入口。", "不建议刚到就跨太多区域。"],
+        ["河边慢走", "把河边散步和市中心轻量安排放在同一天。", "不建议太阳最强的时候连续户外走太久。"],
+        ["室内缓冲", "中午穿插商场、展馆或咖啡店休息。", "不建议为了多去一个点把路线排得太散。"],
+        ["轻量收尾", "最后一天先看退房、交通和行李，再安排附近慢走。", "不建议离开当天去公共交通不顺的地方。"],
+      ],
+      packing: ["公共交通和回住处路线截图", "河边或户外路线先看遮阴", "午后室内休息点收藏", "舒适鞋和轻薄外套放顺手"],
+      guide: ["布里斯班户外舒服但日晒明显，河边、市中心和住处距离先确认会更稳。"],
+    },
+    bangkok: {
+      today: ["先确认住处附近的轻轨、地铁或官方打车方式。", "天气热的时候，中午别硬排户外暴走。", "把商场或室内休息点当作中途缓冲。"],
+      days: [
+        ["交通主线", "第一天围绕住处附近和交通方便区域安排。", "不建议刚到就排堵车风险高的跨区路线。"],
+        ["室内避暑", "白天热的时候穿插商场、咖啡店或室内停留。", "不建议中午连续户外走太久。"],
+        ["短距离探索", "选一个交通顺的街区慢慢走，累了就撤。", "不建议为了临时加点把路线拉得很散。"],
+        ["轻松返程", "最后一天先确认去机场或车站的时间，再安排顺路补给。", "不建议临走前跨区购物或卡着堵车时间移动。"],
+      ],
+      packing: ["轻轨 / 地铁和官方打车 App 先登录", "商场或室内休息点收藏", "回住处路线截图", "堵车时段别把转场卡太紧"],
+      guide: ["曼谷高温和堵车都要留余地，交通主线和室内缓冲比多打卡更重要。"],
+    },
     hotTransit: {
       today: ["先看今天高温或下雨时能躲进哪里的室内点。", "户外行程不要连续排太久，中午留一段休息。", "公共交通和官方打车 App 先准备好。"],
       days: [
@@ -1491,6 +1633,18 @@ function generateCityInsight() {
   };
   const cityKey = cityRule?.id || "default";
   const theme = cityThemes[cityKey] || cityThemes.default;
+  const dayTone = (index, total, first, middle, last) => {
+    if (index === 0) return first;
+    if (index === total - 1) return last;
+    return Array.isArray(middle) ? middle[(index - 1) % middle.length] : middle;
+  };
+  const pickThemeDay = (index, total, days) => {
+    if (!days?.length) return null;
+    if (index === 0) return days[0];
+    if (index === total - 1) return days[days.length - 1];
+    const middleDays = days.slice(1, -1);
+    return middleDays.length ? middleDays[(index - 1) % middleDays.length] : days[Math.min(index, days.length - 1)];
+  };
   const base = {
     today: [...theme.today, weather.today],
     packing: [...(theme.packing || []), ...weather.packing],
@@ -1499,7 +1653,7 @@ function generateCityInsight() {
   const dayCount = Number(state.trip?.days || context.days || 2) <= 2 ? 2 : Number(state.trip?.days || context.days || 2) <= 5 ? 4 : 5;
   const plan = Array.from({ length: dayCount }, (_, index) => {
     const day = index === dayCount - 1 ? "Last Day" : `Day ${index + 1}`;
-    const themeDay = index === dayCount - 1 ? theme.days[theme.days.length - 1] : theme.days[Math.min(index, theme.days.length - 2)];
+    const themeDay = pickThemeDay(index, dayCount, theme.days);
     const suggested = [
       themeDay?.[1],
       index === 0 ? "先把住宿周边、吃饭和回住处路线看清楚。" : null,
@@ -1521,7 +1675,7 @@ function generateCityInsight() {
   }
   if (hasConcern("route")) {
     base.today.unshift("先把今天必须去的地方和可以放弃的地方分开。");
-    plan.forEach((day) => day.suggested.unshift("每天只留一个主要目标，顺路的点放后面。"));
+    plan.forEach((day, index) => day.suggested.unshift(dayTone(index, plan.length, "抵达当天只先确认住处附近和一件主要事。", ["这一天只留一个主要区域，顺路点放后面。", "先处理最想去的一个点，其他看体力再加。", "把路线绕的点放弃一个，别靠赶路解决。"], "最后一天先看退房和返程，别再硬塞远点。")));
   }
   if (hasConcern("photo")) {
     base.packing.unshift("拍照支架或遥控器如果要带，先和常用小物放一起。");
@@ -1534,27 +1688,27 @@ function generateCityInsight() {
     base.today.push("给自己留一个能坐下来的地方，咖啡店、博物馆或书店都可以。");
   }
   if (tuning.rhythm === "relaxed") {
-    plan.forEach((day) => day.suggested.unshift("这一天少排一点，留出临时调整和休息时间。"));
+    plan.forEach((day, index) => day.suggested.unshift(dayTone(index, plan.length, "第一天轻一点，先把住处周边弄熟。", ["中间这天留出一段空白，给临时调整。", "这天别排满，留一点坐下来休息的时间。", "只安排一个主线，剩下顺路再说。"], "离开前只做顺路的小安排。")));
     base.today.unshift("今天先别追求排满，只保留最重要的一步。");
   }
   if (tuning.rhythm === "compact") {
-    plan.forEach((day) => day.suggested.push("如果状态好，可以加一个顺路小点。"));
-    plan.forEach((day) => day.avoid.push("不建议为了紧凑把返程时间压得太死。"));
+    plan.forEach((day, index) => day.suggested.push(dayTone(index, plan.length, "如果到得早，只加住处附近的小点。", "状态好可以加一个同区顺路点。", "收尾日只加交通方便的小点。")));
+    plan.forEach((day, index) => day.avoid.push(dayTone(index, plan.length, "不建议第一天为了紧凑跨太多区。", "不建议为了多去一个点压缩吃饭和休息。", "不建议把返程时间压得太死。")));
   }
   if (tuning.walk === "low") {
-    plan.forEach((day) => day.suggested.unshift("优先选交通方便、距离近、能坐下休息的点。"));
-    plan.forEach((day) => day.avoid.unshift("不建议连续步行太久或安排上下坡太多的路线。"));
+    plan.forEach((day, index) => day.suggested.unshift(dayTone(index, plan.length, "先选离住处近、交通方便的地方。", ["尽量按同一区域走，少来回折返。", "先看最近的交通出口，别靠临时找路。", "把需要走很多路的安排拆开。"], "退房后优先安排少走路的顺路点。")));
+    plan.forEach((day, index) => day.avoid.unshift(dayTone(index, plan.length, "不建议刚到就连续步行太久。", ["不建议把上下坡或远距离步行连在一起。", "不建议为了多逛一点反复绕路。", "不建议在最热的时候安排长距离步行。"], "不建议拖着行李走太多路。")));
     base.packing.unshift("少走路路线和最近交通出口先收藏。");
   }
   if (tuning.walk === "high") {
     plan.forEach((day) => day.suggested.push("可以加一段街区慢走，但别和天气硬扛。"));
   }
   if (tuning.safety === "high") {
-    plan.forEach((day) => day.suggested.unshift("优先白天活动、主路和公共交通。"));
-    plan.forEach((day) => day.avoid.unshift("不建议晚上临时跨区或走不熟的小路。"));
+    plan.forEach((day, index) => day.suggested.unshift(dayTone(index, plan.length, "抵达后先确认主路、车站和回住处路线。", "主要活动尽量放白天，交通路线提前看。", "离开当天优先交通清楚、能随时撤回的安排。")));
+    plan.forEach((day, index) => day.avoid.unshift(dayTone(index, plan.length, "不建议第一晚临时去太远的地方。", "不建议晚上临时跨区或走不熟的小路。", "不建议临走前去路线不清楚的地方。")));
     base.today.unshift("先把回住处路线和可信任联系人放到最前面。");
   } else if (tuning.safety === "steady") {
-    plan.forEach((day) => day.avoid.push("不建议把距离远、换乘复杂的安排放太晚。"));
+    plan.forEach((day, index) => day.avoid.push(dayTone(index, plan.length, "不建议第一天把换乘复杂的安排放太晚。", ["不建议把距离远、换乘复杂的安排放太晚。", "不建议临时走不熟的小路去赶下一个点。", "不建议晚上才决定跨区移动。"], "不建议最后一天临时加远距离路线。")));
   }
   if (tuning.photo === "lots") {
     plan.forEach((day) => day.suggested.push("早上或傍晚留一点低尴尬拍照时间。"));
@@ -1564,10 +1718,10 @@ function generateCityInsight() {
     plan.forEach((day) => day.suggested.push("拍照不用单独排点，顺路记录就好。"));
   }
   if (tuning.alone === "lowPressure") {
-    plan.forEach((day) => day.suggested.push("放一个咖啡店、书店或展览这种低压力停留点。"));
+    plan.forEach((day, index) => day.suggested.push(dayTone(index, plan.length, "到住处附近找一个能坐下来的地方。", ["放一个咖啡店、书店或展览这种低压力停留点。", "给自己留一个不用说话也能待着的地方。", "中间安排一段可以慢慢坐下来的时间。"], "离开前留一段安静收尾时间。")));
     base.today.push("今天给自己一个能坐下来的地方，不用一直走。");
   } else if (tuning.alone === "sometimes") {
-    plan.forEach((day) => day.suggested.push("留一个舒服停留点，累了就坐下来。"));
+    plan.forEach((day, index) => day.suggested.push(dayTone(index, plan.length, "第一天给自己一个缓冲点。", ["留一个舒服停留点，累了就坐下来。", "给这天安排一个轻松的小任务，比如记录一件小事。", "别让一整天空到发慌，放一个低压力停留点。"], "最后一天别把自己弄得太赶。")));
   }
 
   return {
@@ -1575,14 +1729,18 @@ function generateCityInsight() {
       doFirst: uniqueItems(base.today).slice(0, 3),
       dontRush: uniqueItems([profiles[0]?.notNow, "不用现在把所有景点排满。", "不需要为了这趟旅行临时买一堆东西。"]).slice(0, 3),
       checkNow: uniqueItems([
-        "酒店地址是不是已经保存",
+        "酒店地址有没有保存到截图里",
         "回住处的路线能不能快速找到",
-        "证件、钱包、手机是不是都在固定位置",
-        "重要截图能不能离线打开",
+        "订单、路线、入住信息能不能离线打开",
+        "证件、钱包、手机是不是放在固定位置",
+        "充电器有没有还插在墙上",
+        "耳机有没有落在床头或包的小夹层",
         "今天最重要的那件事是不是已经先定下来",
         "如果晚上会晚回，回程路线有没有提前看过",
-        "有没有东西还插在插座上忘了拔",
         "明天一早要用的东西有没有先单独放出来",
+        context.weatherKey === "rainy" && "如果今天下雨，备用路线有没有先截图",
+        hasConcern("route") && "今天必须去和可以放弃的点有没有分开",
+        hasConcern("pack") && "退房前要看的床头、浴室、门后和插座有没有记住",
         ...base.packing,
       ]).slice(0, 5),
     },
@@ -1614,6 +1772,39 @@ function generatePersonalizedTripPlan() {
   return generateCityInsight(aiContext());
 }
 
+function tuningBasisItems() {
+  const tuning = state.travelTuning || {};
+  const labels = {
+    rhythm: { relaxed: "轻松节奏", compact: "紧凑节奏" },
+    walk: { low: "少走路", high: "可以多走" },
+    safety: { steady: "安全感更稳一点", high: "安全感非常重视" },
+    photo: { none: "不特意拍照", lots: "想多拍一点" },
+    alone: { sometimes: "偶尔会孤独", lowPressure: "低压力活动" },
+  };
+  return Object.entries(labels)
+    .map(([key, map]) => map[tuning[key]])
+    .filter(Boolean);
+}
+
+function generationBasisText(mode = "plan") {
+  const destination = getDestinationState();
+  const context = getPackingContext();
+  const profiles = getConcernProfiles();
+  const city = destination.city || getDestinationValue() || context.countryInput;
+  const daysLabel = state.trip?.daysLabel || $("#days")?.selectedOptions?.[0]?.textContent || "";
+  const concernText = profiles.map((profile) => profile.label).join(" / ");
+  const basis = uniqueItems([
+    city,
+    daysLabel,
+    `${context.month}月`,
+    weatherLabel(context.weatherKey),
+    concernText,
+    ...tuningBasisItems(),
+  ]).filter((item) => item && !["undefined", "null"].includes(String(item)));
+  const action = mode === "packing" ? "补充这次清单" : "生成这次安排";
+  return `已根据：${basis.length ? basis.join(" · ") : "这趟旅行"}，${action}。`;
+}
+
 function generatePersonalizedChecklist() {
   const context = getPackingContext();
   const profiles = getConcernProfiles();
@@ -1621,16 +1812,16 @@ function generatePersonalizedChecklist() {
   const tuning = state.travelTuning || {};
   const hasConcern = (key) => profiles.some((profile) => profile.key === key);
   const weatherItems = {
-    hot: ["中午能躲进室内的地方先收藏", "白天步行路线别安排成连续暴走", "水或补给点先想好，不要等渴了再找"],
-    cold: ["晚上回住处那段多准备一层", "室内外温差大，外套别压到行李最底下", "风大的地点别排太晚"],
+    hot: ["中午能坐下来的室内点先收藏一个", "白天步行路线别排成连续暴走", "今天补给点别只靠临时碰运气"],
+    cold: ["晚上回住处那段多准备一层", "室内外温差大，外套别压到行李最底下", "风大的地点别排到太晚"],
     rainy: ["雨天备选路线先截图", "鞋袜湿了的处理办法先想好", "交通可能变慢，别把时间卡太死"],
-    dry: ["容易干到不舒服的小物放随身包", "长时间户外尽量避开最晒那段", "住宿里能不能晾东西先看一眼"],
+    dry: ["润唇膏和常用保湿小物放随身包", "长时间户外尽量避开最晒那段", "住宿里能不能晾东西先看一眼"],
     humid: ["换洗衣物和湿物分开放", "不要带太厚重难干的衣服", "回住处后先把湿东西摊开"],
     windy: ["空旷地点别排太久", "拍照支架不要放在危险边缘", "容易被风吹乱的小物先收好"],
   }[context.weatherKey] || ["今天临时会用到的东西单独放一层"];
   const reasonItems = {
     city: ["今天要走的区域先按顺路排好", "回住处路线别只存在一个 App 里", "临时绕远的点先放到备选"],
-    photo: ["小支架或遥控器和随身小物放一起", "拍照点先看能不能安全放手机", "不要为了照片把路线排到偏僻处"],
+    photo: ["小支架或遥控器和随身小物放一起", "想拍的位置先看有没有安全撤退路线", "不要为了照片把路线排到偏僻处"],
     food: ["餐厅预约和地址截图放一起", "吃完太晚的话，回住处路线先看好", "常用胃药别压进行李箱深处"],
     nature: ["返程交通先确认，不要只看去程", "离线地图能不能打开先试一下", "路线变长时要能直接取消一个点"],
     work: ["会议时间和当地时间再确认一次", "插座位置和网络别等开会前才看", "电脑充电器不要和洗漱包混放"],
@@ -1781,7 +1972,7 @@ function renderPacking() {
   const locationLabel = context.countryInput || context.country?.label || "这趟旅行";
   $("#packingHeadline").textContent = `${locationLabel} · ${context.month} 月清单`;
   const groups = buildPackingGroups();
-  $("#packingList").innerHTML = groups
+  $("#packingList").innerHTML = `<div class="generation-basis">${generationBasisText("packing")}</div>` + groups
     .map((group, groupIndex) => {
       const items = group.items
         .map((item, itemIndex) => {
@@ -1838,32 +2029,46 @@ function renderTravelTuning() {
 }
 
 function generatePlanNow(toastText = "已生成专属计划") {
-  const destination = commitDestinationInput({ render: false });
-  if (destination) {
-    if (!state.trip) {
-      state.trip = {
-        destination: destination.city,
-        destinationState: destination,
-        days: $("#days")?.value || "2",
-        daysLabel: $("#days")?.selectedOptions?.[0]?.textContent || "1-2 天",
-        type: $("#tripType")?.value || "city",
-        worries: $$("#tripForm input[type='checkbox']:checked").map((box) => normalizeConcern(box.value)),
-      };
-    } else {
-      state.trip.destination = destination.city;
-      state.trip.destinationState = destination;
+  const buttons = [$("#generatePlanBtn"), $("#regeneratePlanBtn")].filter(Boolean);
+  const previousLabels = buttons.map((button) => button.textContent);
+  buttons.forEach((button) => {
+    button.disabled = true;
+    button.textContent = "正在帮你把这趟捋顺...";
+  });
+  $("#planList").innerHTML = `<div class="empty-state plan-empty-state">正在帮你把这趟捋顺...</div>`;
+  setTimeout(() => {
+    persistCurrentTripSettings({ keepPlan: true });
+    const destination = commitDestinationInput({ render: false });
+    if (destination) {
+      if (!state.trip) {
+        state.trip = {
+          destination: destination.city,
+          destinationState: destination,
+          days: $("#days")?.value || "2",
+          daysLabel: $("#days")?.selectedOptions?.[0]?.textContent || "1-2 天",
+          type: $("#tripType")?.value || "city",
+          worries: $$("#tripForm input[type='checkbox']:checked").map((box) => normalizeConcern(box.value)),
+        };
+      } else {
+        state.trip.destination = destination.city;
+        state.trip.destinationState = destination;
+      }
+      state.destinationState = destination;
     }
-    state.destinationState = destination;
-  }
-  state.planGenerated = true;
-  save();
-  renderPlan();
-  renderPacking();
-  renderTasks();
-  renderGuides();
-  renderCityInsightTips();
-  renderMine();
-  showToast(toastText);
+    state.planGenerated = true;
+    save();
+    renderPlan();
+    renderPacking();
+    renderTasks();
+    renderGuides();
+    renderCityInsightTips();
+    renderMine();
+    buttons.forEach((button, index) => {
+      button.disabled = false;
+      button.textContent = previousLabels[index];
+    });
+    showToast(toastText);
+  }, 220);
 }
 
 function renderPlan() {
@@ -1876,7 +2081,7 @@ function renderPlan() {
     $("#planCount").textContent = "待生成";
     return;
   }
-  $("#planList").innerHTML = buildPlanDays()
+  $("#planList").innerHTML = `<div class="generation-basis">${generationBasisText("plan")}</div>` + buildPlanDays()
     .map((day, index) => {
       const id = `plan-${index}`;
       return `
@@ -2109,6 +2314,104 @@ function cityMatches(country, query = "") {
     .slice(0, 50);
 }
 
+function destinationSearchMatches(query = "") {
+  const keyword = query.trim().toLowerCase();
+  const source = keyword ? destinationItems : destinationItems.filter((item) => item.regionType === activeDestinationTab);
+  return source
+    .filter((item) => !keyword || item.keywords.includes(keyword))
+    .sort((a, b) => a.sortKey.localeCompare(b.sortKey, "en"))
+    .slice(0, keyword ? 50 : 160);
+}
+
+function popularDestinationsForTab(tab = activeDestinationTab) {
+  const names = popularDestinationNames[tab] || popularDestinationNames.mainland_china;
+  return names.map((name) => findDestinationItem(name)).filter(Boolean);
+}
+
+function destinationLetter(item) {
+  return (item.sortKey || item.cityEn || item.city || "#").charAt(0).toUpperCase();
+}
+
+function renderDestinationPanel() {
+  const search = $("#destinationSearch")?.value || "";
+  const popular = $("#popularDestinations");
+  const list = $("#destinationCityList");
+  const alphabet = $("#destinationAlphabet");
+  if (!popular || !list || !alphabet) return;
+  $$(".destination-tabs [data-destination-tab]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.destinationTab === activeDestinationTab);
+  });
+  const popularItems = popularDestinationsForTab();
+  popular.innerHTML = popularItems
+    .map((item) => `<button type="button" data-destination-city="${escapeHTML(item.city)}">${escapeHTML(item.city)}</button>`)
+    .join("");
+  const items = destinationSearchMatches(search);
+  const customValue = search.trim();
+  let currentLetter = "";
+  const rows = items
+    .map((item) => {
+      const letter = destinationLetter(item);
+      const heading = letter !== currentLetter ? `<div class="destination-letter" id="destination-letter-${letter}">${letter}</div>` : "";
+      currentLetter = letter;
+      return `
+        ${heading}
+        <button type="button" class="destination-city-row" data-destination-city="${escapeHTML(item.city)}">
+          <strong>${escapeHTML(item.city)}</strong>
+          <span>${escapeHTML(item.cityEn)} · ${escapeHTML(regionDisplayForDestination(item))}</span>
+        </button>
+      `;
+    })
+    .join("");
+  const customExists = customValue && items.some((item) => item.city === customValue || item.cityEn.toLowerCase() === customValue.toLowerCase());
+  list.innerHTML = `
+    ${rows || `<div class="destination-empty">没有找到匹配的城市。</div>`}
+    ${
+      customValue && !customExists
+        ? `<button type="button" class="destination-custom-row" data-destination-custom="${escapeHTML(customValue)}"><strong>没有找到？使用“${escapeHTML(customValue)}”作为目的地</strong><span>之后也可以继续修改</span></button>`
+        : ""
+    }
+  `;
+  const letters = [...new Set(items.map(destinationLetter))];
+  alphabet.innerHTML = letters.map((letter) => `<button type="button" data-jump-letter="${letter}">${letter}</button>`).join("");
+}
+
+function openDestinationPanel() {
+  const panel = $("#destinationPanel");
+  const button = $("#destinationDisplay");
+  if (!panel || !button) return;
+  closeCountryDropdown();
+  closeCityDropdown();
+  panel.hidden = false;
+  button.setAttribute("aria-expanded", "true");
+  if ($("#destinationSearch")) $("#destinationSearch").value = "";
+  activeDestinationTab = state.destinationState?.regionType && state.destinationState.regionType !== "custom" ? state.destinationState.regionType : activeDestinationTab;
+  renderDestinationPanel();
+  setTimeout(() => $("#destinationSearch")?.focus(), 0);
+}
+
+function closeDestinationPanel() {
+  const panel = $("#destinationPanel");
+  const button = $("#destinationDisplay");
+  if (!panel || !button) return;
+  panel.hidden = true;
+  button.setAttribute("aria-expanded", "false");
+}
+
+function selectDestinationCity(cityName) {
+  const item = findDestinationItem(cityName);
+  const destination = item
+    ? createCustomDestination(item.country, item.city)
+    : { city: cityName, cityEn: "", country: "", countryEn: "", region: "自定义目的地", regionType: "custom", sortKey: cityName, aliases: [cityName], customInput: true };
+  setDestinationState(destination);
+  persistCurrentTripSettings();
+  renderTrip();
+  renderTasks();
+  renderPlan();
+  renderPacking();
+  renderAllCards();
+  closeDestinationPanel();
+}
+
 function renderCountryDropdown(query = "") {
   const dropdown = $("#countryDropdown");
   if (!dropdown) return;
@@ -2221,6 +2524,7 @@ function closeCityDropdown() {
 function closeDestinationDropdown() {
   closeCountryDropdown();
   closeCityDropdown();
+  closeDestinationPanel();
 }
 
 function commitDestinationInput(options = {}) {
@@ -2239,6 +2543,7 @@ function initDestinationOptions() {
   if (state.destinationState?.city) cityInput.value = state.destinationState.city;
   renderCountryDropdown(countryInput.value);
   renderCityDropdown(cityInput.value);
+  updateDestinationDisplay();
 }
 
 function initPackingControls() {
@@ -2374,6 +2679,43 @@ function bindEvents() {
     }
   });
 
+  $("#destinationDisplay")?.addEventListener("click", openDestinationPanel);
+  $("#closeDestinationPanel")?.addEventListener("click", closeDestinationPanel);
+  $("#destinationSearch")?.addEventListener("input", renderDestinationPanel);
+  $("#destinationSearch")?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const value = $("#destinationSearch")?.value.trim();
+      if (value) selectDestinationCity(value);
+    }
+    if (event.key === "Escape") closeDestinationPanel();
+  });
+  $(".destination-tabs")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-destination-tab]");
+    if (!button) return;
+    activeDestinationTab = button.dataset.destinationTab;
+    if ($("#destinationSearch")) $("#destinationSearch").value = "";
+    renderDestinationPanel();
+  });
+  $("#destinationPanel")?.addEventListener("click", (event) => {
+    if (event.target.id === "destinationPanel") closeDestinationPanel();
+    const cityButton = event.target.closest("[data-destination-city]");
+    if (cityButton) {
+      selectDestinationCity(cityButton.dataset.destinationCity);
+      return;
+    }
+    const customButton = event.target.closest("[data-destination-custom]");
+    if (customButton) {
+      selectDestinationCity(customButton.dataset.destinationCustom);
+      return;
+    }
+    const letterButton = event.target.closest("[data-jump-letter]");
+    if (letterButton) {
+      const target = $(`#destination-letter-${letterButton.dataset.jumpLetter}`);
+      target?.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+  });
+
   document.body.addEventListener("click", (event) => {
     const countryButton = event.target.closest("[data-country-name], [data-country-custom]");
     if (countryButton) {
@@ -2385,6 +2727,7 @@ function bindEvents() {
       window.selectCityButton(event, cityButton);
       return;
     }
+    if (event.target.closest("#destinationPanel")) return;
     if (!event.target.closest("#destinationPicker")) closeDestinationDropdown();
   });
 
@@ -2421,8 +2764,16 @@ function bindEvents() {
   $("#drawPhotoTheme")?.addEventListener("click", drawPhotoTheme);
 
   $("#extraPackCheck")?.addEventListener("click", () => {
-    renderExtraPackingTips();
-    showToast("已补充提醒");
+    const button = $("#extraPackCheck");
+    const previousLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = "正在根据这趟旅行整理中...";
+    setTimeout(() => {
+      renderExtraPackingTips();
+      button.disabled = false;
+      button.textContent = previousLabel;
+      showToast("已按这趟旅行补充");
+    }, 180);
   });
 
   $("#cityInsightCheck")?.addEventListener("click", async () => {
@@ -2430,8 +2781,8 @@ function bindEvents() {
     showToast("已补充城市提醒");
   });
 
-  $("#generatePlanBtn")?.addEventListener("click", () => generatePlanNow("已生成专属计划"));
-  $("#regeneratePlanBtn")?.addEventListener("click", () => generatePlanNow("已重新生成"));
+  $("#generatePlanBtn")?.addEventListener("click", () => generatePlanNow("已按这趟旅行排好"));
+  $("#regeneratePlanBtn")?.addEventListener("click", () => generatePlanNow("已按你的状态重新排好"));
 
   $("#travelTuning")?.addEventListener("change", (event) => {
     const input = event.target;
@@ -2469,26 +2820,25 @@ function bindEvents() {
 
   ["days", "tripType", "tripMonth", "tripWeather"].forEach((id) => {
     $(`#${id}`)?.addEventListener("change", () => {
-      if (!state.trip) return;
-      state.trip.days = $("#days").value;
-      state.trip.daysLabel = $("#days").selectedOptions[0].textContent;
-      state.trip.type = $("#tripType").value;
-      state.packingContext = {
-        ...(state.packingContext || {}),
-        country: getDestinationValue(),
-        month: Number($("#tripMonth")?.value || getCurrentMonth()),
-        weather: $("#tripWeather")?.value || "auto",
-        reason: $("#tripType").value,
-      };
+      persistCurrentTripSettings();
       syncPackingLocationFromTrip(true);
-      state.planGenerated = false;
-      save();
       renderTrip();
       renderPlan();
       renderPacking();
       renderAllCards();
       if ($("#cityInsightTips")?.classList.contains("show")) renderCityInsightTips();
       if ($("#extraPackTips")?.classList.contains("show")) renderExtraPackingTips();
+    });
+  });
+
+  $$("#tripForm input[type='checkbox']").forEach((box) => {
+    box.addEventListener("change", () => {
+      persistCurrentTripSettings();
+      renderTrip();
+      renderTasks();
+      renderPlan();
+      renderPacking();
+      renderAllCards();
     });
   });
 
@@ -2515,9 +2865,9 @@ function bindEvents() {
     openCityDropdown();
   });
   $("#cityInput")?.addEventListener("change", () => {
-    if (!state.trip) return;
     const destination = commitDestinationInput({ render: false });
     if (!destination) return;
+    persistCurrentTripSettings();
     state.trip.destination = destination.city;
     state.trip.destinationState = destination;
     state.destinationState = destination;
@@ -2534,6 +2884,7 @@ function bindEvents() {
     if (event.key === "Enter") {
       event.preventDefault();
       commitDestinationInput();
+      persistCurrentTripSettings();
       closeCityDropdown();
     }
     if (event.key === "Escape") closeCityDropdown();
@@ -2559,7 +2910,7 @@ function bindEvents() {
     input.value = "";
     save();
     renderJournals();
-    showToast("心情已保存");
+    showToast("已记下，今天的状态也被你带走了。");
   });
 
   document.body.addEventListener("click", (event) => {
